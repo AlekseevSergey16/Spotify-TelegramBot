@@ -64,4 +64,39 @@ public class JsonParserSpotify {
 
         return playlists;
     }
+
+    public List<Album> parseJsonAlbums(HttpResponse<String> response) {
+        List<Album> albums = new ArrayList<>();
+
+        JsonObject responseJson = JsonParser.parseString(response.body()).getAsJsonObject();
+        JsonObject jsonObject = responseJson.get("albums").getAsJsonObject();
+        for (JsonElement item : jsonObject.getAsJsonArray("items")) {
+            String title = item.getAsJsonObject().get("name").getAsString();
+            StringBuilder nameArtist = new StringBuilder();
+            JsonArray artists = item.getAsJsonObject().getAsJsonArray("artists");
+            int size = artists.size();
+            if (size > 0) {
+                for (int i = 0; i < size; i++) {
+                    if (i == size - 1) {
+                        nameArtist.append(artists.get(i).getAsJsonObject().get("name").getAsString());
+                        break;
+                    }
+                    nameArtist.append(artists.get(i).getAsJsonObject().get("name").getAsString()).append(" ◦ ");
+                }
+            }
+            String urlSpotify = item.getAsJsonObject()
+                    .get("external_urls")
+                    .getAsJsonObject()
+                    .get("spotify")
+                    .getAsString();
+
+            String releaseDate = item.getAsJsonObject().get("release_date").getAsString();
+            int totalTracks = Integer.parseInt(item.getAsJsonObject().get("total_tracks").getAsString());
+            String artist = nameArtist.toString();
+
+            albums.add(new Album(title, artist, releaseDate, totalTracks, urlSpotify));
+        }
+
+        return albums;
+    }
 }

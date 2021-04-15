@@ -4,7 +4,8 @@ public enum CommandName {
     START("/start"),
     HELP("/help"),
     NEW_RELEASES("/new"),
-    PLAYLISTS("/playlists");
+    PLAYLISTS("/playlists"),
+    ALBUM("/album");
 
     private final String commandName;
 

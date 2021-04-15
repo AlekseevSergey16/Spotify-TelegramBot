@@ -50,6 +50,18 @@ public class SpotifyHttpClient {
         return parser.parseJsonPlaylists(response);
     }
 
+    public List<Album> getAlbums(String album, String artist) throws IOException, InterruptedException {
+        String token = getToken();
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + token)
+                .uri(URI.create("https://api.spotify.com/v1/search?q=album:"+album+"%20artist:"+artist+"&type=album&market=RU"))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        return parser.parseJsonNewReleases(response);
+    }
+
     public String getToken() throws IOException, InterruptedException {
         String url_token = "https://accounts.spotify.com/api/token";
         HttpRequest requestToken = HttpRequest.newBuilder()
