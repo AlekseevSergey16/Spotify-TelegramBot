@@ -9,13 +9,13 @@ import сlient.SpotifyHttpClient;
 import java.io.IOException;
 import java.util.List;
 
-public class SearchAlbumCommand implements Command {
+public class ArtistCommand implements Command {
 
-    private SpotifyHttpClient spotifyClient;
-    private SendBotMessageService messageService;
+    private final SpotifyHttpClient spotifyClient;
+    private final SendBotMessageService messageService;
     private List<Album> albums;
 
-    public SearchAlbumCommand(SendBotMessageService messageService, SpotifyHttpClient spotifyClient) {
+    public ArtistCommand(SendBotMessageService messageService, SpotifyHttpClient spotifyClient) {
         this.messageService = messageService;
         this.spotifyClient = spotifyClient;
     }
@@ -24,20 +24,13 @@ public class SearchAlbumCommand implements Command {
     public void execute(Update update) {
         String text = update.getMessage().getText();
         String[] message = text.split(" ");
-        String[] albumAndArtist = message[1].split("-");
-
-        String artistName = albumAndArtist[0];
+        String artistName = message[1];
         String artist = artistName.replace("_", " ");
-
-        String nameAlbum = albumAndArtist[1];
-        String albumTitle = nameAlbum.replace("_", " ");
-
         try {
-            albums = spotifyClient.getAlbums(albumTitle, artist);
+            albums = spotifyClient.getArtist(artist);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
         SendBotMessageServiceImpl sendBotMessageService = (SendBotMessageServiceImpl)messageService;
 
         for (Album album : albums) {

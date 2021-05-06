@@ -5,7 +5,10 @@ public enum CommandName {
     HELP("/help"),
     NEW_RELEASES("/new"),
     PLAYLISTS("/playlists"),
-    ALBUM("/album");
+    ALBUM("/album"),
+    ADD("/add"),
+    MEDIA("/media"),
+    ARTIST("/artist");
 
     private final String commandName;
 

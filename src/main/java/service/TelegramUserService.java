@@ -5,5 +5,5 @@ import service.dbService.DBException;
 
 public interface TelegramUserService {
     void saveUser(TelegramUser user);
-    TelegramUser findByChatId(String chatId) throws DBException;
+    TelegramUser findByChatId(String chatId);
 }

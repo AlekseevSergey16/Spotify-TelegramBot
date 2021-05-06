@@ -2,23 +2,23 @@ package сlient;
 
 import com.google.gson.*;
 import model.Album;
-import parser.JsonParserSpotify;
+import parser.ParserSpotify;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class SpotifyHttpClient {
 
     private final HttpClient client;
-    private final JsonParserSpotify parser;
 
     public SpotifyHttpClient() {
         client = HttpClient.newBuilder().build();
-        parser = new JsonParserSpotify();
     }
 
     public List<Album> getNewReleases() throws IOException, InterruptedException {
@@ -30,7 +30,7 @@ public class SpotifyHttpClient {
                 .build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        return parser.parseJsonNewReleases(response);
+        return ParserSpotify.parseJsonNewReleases(response);
     }
 
     public Map<String, String> getPlaylists() throws IOException, InterruptedException {
@@ -47,19 +47,46 @@ public class SpotifyHttpClient {
                 .build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        return parser.parseJsonPlaylists(response);
+        return ParserSpotify.parseJsonPlaylists(response);
     }
 
     public List<Album> getAlbums(String album, String artist) throws IOException, InterruptedException {
         String token = getToken();
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .header("Authorization", "Bearer " + token)
-                .uri(URI.create("https://api.spotify.com/v1/search?q=album:"+album+"%20artist:"+artist+"&type=album&market=RU"))
+                .uri(URI.create("https://api.spotify.com/v1/search?q=album:"+ URLEncoder.encode(album, StandardCharsets.UTF_8)
+                        +"%20artist:"+URLEncoder.encode(artist, StandardCharsets.UTF_8)+"&type=album&market=RU"))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        return parser.parseJsonNewReleases(response);
+        return ParserSpotify.parseJsonNewReleases(response);
+    }
+
+    public List<Album> getArtist(String artist) throws IOException, InterruptedException {
+        String token = getToken();
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + token)
+                .uri(URI.create("https://api.spotify.com/v1/artists/"+getArtistId(artist)+"/albums?include_groups=album&market=RU"))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        return ParserSpotify.parseJsonAlbums(response);
+    }
+
+    public String getArtistId(String artist) throws IOException, InterruptedException {
+        String token = getToken();
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .header("Authorization", "Bearer " + token)
+                .uri(URI.create("https://api.spotify.com/v1/search?q=" + URLEncoder.encode(artist, StandardCharsets.UTF_8)
+                        + "&type=artist&market=RU&limit=1"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        return ParserSpotify.parseJsonArtist(response);
     }
 
     public String getToken() throws IOException, InterruptedException {
