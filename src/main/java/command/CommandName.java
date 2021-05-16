@@ -8,7 +8,8 @@ public enum CommandName {
     ALBUM("/album"),
     ADD("/add"),
     MEDIA("/media"),
-    ARTIST("/artist");
+    ARTIST("/artist"),
+    LYRIC("/lyric");
 
     private final String commandName;
 

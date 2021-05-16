@@ -5,6 +5,7 @@ import service.AlbumServiceImpl;
 import service.MediaServiceImpl;
 import service.SendBotMessageService;
 import service.TelegramUserServiceImpl;
+import сlient.GeniusHttpClient;
 import сlient.SpotifyHttpClient;
 
 import static command.CommandName.*;
@@ -24,6 +25,7 @@ public class CommandContainer {
                         new TelegramUserServiceImpl(), new AlbumServiceImpl(), new MediaServiceImpl()))
                 .put(MEDIA.getCommandName(), new GetAlbumCommand(messageService, new MediaServiceImpl()))
                 .put(ARTIST.getCommandName(), new ArtistCommand(messageService, new SpotifyHttpClient()))
+                .put(LYRIC.getCommandName(), new LyricCommand(messageService, new GeniusHttpClient()))
                 .build();
     }
 

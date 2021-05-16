@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ParserSpotify {
+
+    private ParserSpotify() {}
+
     public static List<Album> parseJsonNewReleases(HttpResponse<String> response) {
         List<Album> albums = new ArrayList<>();
         JsonObject responseJson  = JsonParser.parseString(response.body()).getAsJsonObject();
